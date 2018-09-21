@@ -27,7 +27,7 @@ public final class TweakStore {
 	private var tweakSetBindings: [Set<AnyTweak>: [MultiTweakBinding]] = [:]
 
 	/// Persists tweaks' currentValues and maintains them on disk.
-	private let persistence: TweakPersistency
+	public let persistence: TweakPersistency
 
 	/// Determines whether tweaks are enabled, and whether the tweaks UI is accessible
 	internal let enabled: Bool

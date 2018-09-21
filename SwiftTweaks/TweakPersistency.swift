@@ -14,11 +14,11 @@ internal protocol TweakIdentifiable {
 }
 
 /// Caches Tweak values
-internal typealias TweakCache = [String: TweakableType]
+public typealias TweakCache = [String: TweakableType]
 
 
 /// Persists state for tweaks in a TweakCache
-internal final class TweakPersistency {
+public class TweakPersistency {
 	private let diskPersistency: TweakDiskPersistency
 
 	private var tweakCache: TweakCache = [:]
@@ -74,8 +74,8 @@ private final class TweakDiskPersistency {
 	private static let dataClassName = "TweakDiskPersistency.Data"
 
 	init(identifier: String) {
-		NSKeyedUnarchiver.setClass(TweakDiskPersistency.Data.self, forClassName: TweakDiskPersistency.dataClassName)
-		NSKeyedArchiver.setClassName(TweakDiskPersistency.dataClassName, for: TweakDiskPersistency.Data.self)
+		NSKeyedUnarchiver.setClass(TweakDiskPersistency.SwiftTweaksData.self, forClassName: TweakDiskPersistency.dataClassName)
+		NSKeyedArchiver.setClassName(TweakDiskPersistency.dataClassName, for: TweakDiskPersistency.SwiftTweaksData.self)
 
 		self.fileURL = TweakDiskPersistency.fileURLForIdentifier(identifier)
 		self.ensureDirectoryExists()
@@ -94,7 +94,7 @@ private final class TweakDiskPersistency {
 		self.queue.sync {
 			result = (try? Foundation.Data(contentsOf: self.fileURL))
 				.flatMap(NSKeyedUnarchiver.unarchiveObject(with:))
-				.flatMap { $0 as? Data }
+				.flatMap { $0 as? SwiftTweaksData }
 				.map { $0.cache }
 				?? [:]
 		}
@@ -104,9 +104,15 @@ private final class TweakDiskPersistency {
 
 	func saveToDisk(_ data: TweakCache) {
 		self.queue.async {
-			let nsData = NSKeyedArchiver.archivedData(withRootObject: Data(cache: data))
+			let nsData = NSKeyedArchiver.archivedData(withRootObject: SwiftTweaksData(cache: data))
 			try! nsData.write(to: self.fileURL, options: [.atomic])
 		}
+	}
+
+	func dataRepresentation(_ data: TweakCache) -> Data {
+		let nsData = NSKeyedArchiver.archivedData(withRootObject: SwiftTweaksData(cache: data))
+
+		return nsData
 	}
 
 	/// Implements NSCoding for TweakCache.
@@ -114,7 +120,7 @@ private final class TweakDiskPersistency {
 	/// However, because re-hydrating TweakableType from its underlying NSNumber gets Bool & Int mixed up, we have to persist a different structure on disk: [TweakViewDataType: [String: AnyObject]]
 	/// This ensures that if something was saved as a Bool, it's read back as a Bool.
 	// NOTE (bryanjclark): The long string here is to preserve backwards-compatibility with pre-Swift4 SwiftTweaks archives.
-	@objc(_TtCC11SwiftTweaksP33_9992646B9FE5A082B6B2A55DA4E653F420TweakDiskPersistency4Data) private final class Data: NSObject, NSCoding {
+	@objc(_TtCC11SwiftTweaksP33_9992646B9FE5A082B6B2A55DA4E653F420TweakDiskPersistency4Data) private final class SwiftTweaksData: NSObject, NSCoding {
 		let cache: TweakCache
 
 		init(cache: TweakCache) {
@@ -130,7 +136,7 @@ private final class TweakDiskPersistency {
 				if let dataTypeDictionary = aDecoder.decodeObject(forKey: dataType.nsCodingKey) as? Dictionary<String, AnyObject> {
 					// Read through each entry and populate the cache
 					for (key, value) in dataTypeDictionary {
-						if let value = Data.tweakableTypeWithAnyObject(value, withType: dataType) {
+						if let value = SwiftTweaksData.tweakableTypeWithAnyObject(value, withType: dataType) {
 							cache[key] = value
 						}
 					}
