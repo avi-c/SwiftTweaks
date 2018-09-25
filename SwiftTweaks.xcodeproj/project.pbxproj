@@ -95,6 +95,7 @@
 		D5CE0BE11DC7E1FB00F79235 /* TweakBindingIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5CE0BDB1DC7DFC200F79235 /* TweakBindingIdentifier.swift */; };
 		D5CE0BE21DC7E1FB00F79235 /* MultiTweakBindingIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5CE0BDF1DC7E0D600F79235 /* MultiTweakBindingIdentifier.swift */; };
 		D5E3FEE91DC8760A00C9D648 /* MultiTweakBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5CE0BDD1DC7E04A00F79235 /* MultiTweakBinding.swift */; };
+		F41943B9215AB343001649D6 /* CodableTweak.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41943B8215AB343001649D6 /* CodableTweak.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -166,6 +167,7 @@
 		D5CE0BDB1DC7DFC200F79235 /* TweakBindingIdentifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TweakBindingIdentifier.swift; sourceTree = "<group>"; };
 		D5CE0BDD1DC7E04A00F79235 /* MultiTweakBinding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiTweakBinding.swift; sourceTree = "<group>"; };
 		D5CE0BDF1DC7E0D600F79235 /* MultiTweakBindingIdentifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiTweakBindingIdentifier.swift; sourceTree = "<group>"; };
+		F41943B8215AB343001649D6 /* CodableTweak.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CodableTweak.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -317,6 +319,7 @@
 		93A84EFA1BEAE8940022D2F3 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				F41943B8215AB343001649D6 /* CodableTweak.swift */,
 				93AA34581BEC0EF9004B734B /* TweakableType.swift */,
 				93A84EEC1BEAE88D0022D2F3 /* Tweak.swift */,
 				939F2CDF1CB81ED400345E03 /* TweakClusterType.swift */,
@@ -505,6 +508,7 @@
 				937962951BFE7B2C0046E4CE /* TweakStore+Sharing.swift in Sources */,
 				931A24741BFA7A3800E40192 /* TweakColorCell.swift in Sources */,
 				937AA36F1CB5D6DA000928C5 /* HitTransparentWindow.swift in Sources */,
+				F41943B9215AB343001649D6 /* CodableTweak.swift in Sources */,
 				93212CB21CEE258900AA85D0 /* CALayer+ShadowTweakTemplate.swift in Sources */,
 				93A3AF321BF1677B00CAD43B /* TweakWindow.swift in Sources */,
 				932BA9D41BFA398A001ADFC6 /* UIColor+Tweaks.swift in Sources */,

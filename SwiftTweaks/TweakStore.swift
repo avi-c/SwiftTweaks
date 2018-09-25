@@ -15,7 +15,7 @@ public final class TweakStore {
 	fileprivate var tweakCollections: [String: TweakCollection] = [:]
 
 	/// Useful when exporting or checking that a tweak exists in tweakCollections
-	private let allTweaks: Set<AnyTweak>
+	public let allTweaks: Set<AnyTweak>
 
 	/// We hold a reference to the storeName so we can have a better error message if a tweak doesn't exist in allTweaks.
 	private let storeName: String
@@ -27,7 +27,7 @@ public final class TweakStore {
 	private var tweakSetBindings: [Set<AnyTweak>: [MultiTweakBinding]] = [:]
 
 	/// Persists tweaks' currentValues and maintains them on disk.
-	public let persistence: TweakPersistency
+	private let persistence: TweakPersistency
 
 	/// Determines whether tweaks are enabled, and whether the tweaks UI is accessible
 	internal let enabled: Bool
