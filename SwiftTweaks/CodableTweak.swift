@@ -9,10 +9,10 @@
 import UIKit
 
 public struct CodeableTweak : Codable {
-	var collectionName: String
-	var groupName: String
-	var tweakName: String
-	var tweakType: Int
+	public var collectionName: String
+	public var groupName: String
+	public var tweakName: String
+	public var tweakType: Int
 	public var doubleValue: Double
 	public var cgFloatValue: CGFloat
 	public var intValue: Int
