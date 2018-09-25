@@ -36,7 +36,7 @@ public protocol TweakType: TweakClusterType {
 	var tweakDefaultData: TweakDefaultData { get }
 }
 
-extension TweakType {
+public extension TweakType {
 	var tweakIdentifier: String {
 		return "\(collectionName)\(TweakIdentifierSeparator)\(groupName)\(TweakIdentifierSeparator)\(tweakName)"
 	}
