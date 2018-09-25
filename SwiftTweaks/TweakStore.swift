@@ -167,6 +167,11 @@ public final class TweakStore {
 		updateBindingsForTweak(tweak)
 	}
 
+	public func setValue(_ value: TweakableType, forTweak tweak: AnyTweak) {
+		persistence.setValue(value, forTweakIdentifiable: tweak)
+		updateBindingsForTweak(tweak)
+	}
+
 
 	// MARK - Private
 
