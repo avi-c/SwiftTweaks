@@ -75,6 +75,7 @@ public struct CodeableTweak : Codable {
 		try container.encode(collectionName, forKey: .collectionName)
 		try container.encode(groupName, forKey: .groupName)
 		try container.encode(tweakName, forKey: .tweakName)
+		try container.encode(tweakType, forKey: .tweakType)
 		try container.encode(doubleValue, forKey: .doubleValue)
 		try container.encode(cgFloatValue, forKey: .cgFloatValue)
 		try container.encode(intValue, forKey: .intValue)
