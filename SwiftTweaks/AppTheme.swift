@@ -51,6 +51,7 @@ internal struct AppTheme {
 
 	struct Fonts {
 		static let sectionHeaderTitleFont: UIFont = .preferredFont(forTextStyle: UIFontTextStyle.body)
+		static let tweakNameLabelFont: UIFont = .preferredFont(forTextStyle: UIFontTextStyle.body)
 	}
 
 	struct Shadows {

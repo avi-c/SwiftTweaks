@@ -97,7 +97,7 @@ class ViewController: UIViewController {
 		}
 		multiTweakBindings.insert(multipleBinding)
 
-        debugStuff()
+//        debugStuff()
 	}
 
     func debugStuff() -> Void {

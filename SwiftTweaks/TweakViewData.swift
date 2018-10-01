@@ -222,4 +222,94 @@ internal enum TweakViewData {
 
 		return (resultMin, resultMax, resultStep)
 	}
+
+	// These are the defaults that UIKit has for the UIStepper min and max
+	internal static let sliderDefaultMinimum: Double = 0
+
+	internal static let sliderDefaultMaximumLarge: Double = 5000
+
+	internal static let sliderDefaultMaximumSmall: Double = 1
+
+	/// Used when no max is given and the default is > sliderDefaultMaximum
+	internal static let sliderBoundsMultiplier: Double = 2
+
+	internal typealias SliderValues = (sliderMin: Double, sliderMax: Double)
+
+	var sliderValues: SliderValues? {
+		precondition(self.isSignedNumberType)
+
+		let currentValue: Double
+		let defaultValue: Double
+		let minimum: Double?
+		let maximum: Double?
+		let isInteger: Bool
+		switch self {
+		case .boolean, .color, .string, .stringList:
+			return nil
+
+		case let .integer(intValue, intDefaultValue, intMin, intMax, _):
+			currentValue = Double(intValue)
+			defaultValue = Double(intDefaultValue)
+			minimum = intMin.map(Double.init)
+			maximum = intMax.map(Double.init)
+			isInteger = true
+
+		case let .float(floatValue, floatDefaultValue, floatMin, floatMax, _):
+			currentValue = Double(floatValue)
+			defaultValue = Double(floatDefaultValue)
+			minimum = floatMin.map(Double.init)
+			maximum = floatMax.map(Double.init)
+			isInteger = false
+
+		case let .doubleTweak(doubleValue, doubleDefaultValue, doubleMin, doubleMax, _):
+			currentValue = doubleValue
+			defaultValue = doubleDefaultValue
+			minimum = doubleMin
+			maximum = doubleMax
+			isInteger = false
+		}
+
+		// UISlider defaults to (min = 0, max = 1), so we'll use those as a fallback.
+		var resultMin: Double = TweakViewData.sliderDefaultMinimum
+		var resultMax: Double = TweakViewData.sliderDefaultMaximumLarge
+
+		// We'll use the "small defaults" when all of these conditions are met:
+		//  - non-integer
+		//  - defaultValue 0 < x < 1
+		//  - currentValue 0 < x < 1
+		//  - maxValue (if given) <= 1
+		let isSmallDefaultValue = (0 <= defaultValue) && (defaultValue < TweakViewData.sliderDefaultMaximumSmall)
+		let isSmallCurrentValue = (0 <= currentValue) && (currentValue < TweakViewData.sliderDefaultMaximumSmall)
+		let isSmallMaxValue = (maximum ?? 0) <= TweakViewData.sliderDefaultMaximumSmall
+		if !isInteger && isSmallDefaultValue && isSmallMaxValue && isSmallCurrentValue {
+			resultMax = TweakViewData.sliderDefaultMaximumSmall
+		} else {
+			// If we have a currentValue or defaultValue that's outside the bounds, we'll want to give some space to 'em.
+			if (defaultValue < resultMin) || (currentValue < resultMin) {
+				let lowerValue = min(currentValue, defaultValue)
+				resultMin = (lowerValue < 0) ?
+					lowerValue * TweakViewData.sliderBoundsMultiplier :
+					lowerValue / TweakViewData.sliderBoundsMultiplier
+			}
+
+			if (defaultValue > resultMax) || (currentValue > resultMax) {
+				let upperValue = max(currentValue, defaultValue)
+				resultMax = (upperValue < 0) ?
+					upperValue / TweakViewData.sliderBoundsMultiplier :
+					upperValue * TweakViewData.sliderBoundsMultiplier
+			}
+		}
+
+		// If the tweak is an integer, whatever we've got, let's round it to the nearest integer.
+		if isInteger {
+			resultMin = resultMin.roundToNearest(.integer)
+			resultMax = resultMax.roundToNearest(.integer)
+		}
+
+		// Lastly, to override any above work: if an explicit min/max were given, use those.
+		resultMin = minimum ?? resultMin
+		resultMax = maximum ?? resultMax
+
+		return (resultMin, resultMax)
+	}
 }

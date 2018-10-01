@@ -50,14 +50,28 @@ internal final class TweakTableCell: UITableViewCell {
 		return stepper
 	}()
 
+	private let sliderControl: UISlider = {
+		let slider = UISlider()
+		slider.tintColor = AppTheme.Colors.controlTinted
+		return slider
+	}()
+
 	private let colorChit: UIView = {
 		let view = UIView()
 		view.layer.cornerRadius = 4
 		return view
 	}()
+
+	public let tweakNameLabel: UILabel = {
+		let tweakNameLabel = UILabel()
+		tweakNameLabel.textColor = AppTheme.Colors.textPrimary
+		tweakNameLabel.font = AppTheme.Fonts.tweakNameLabelFont
+		return tweakNameLabel
+	}()
+
 	private let textField: UITextField = {
 		let textField = UITextField()
-		textField.textAlignment = .right
+		textField.textAlignment = .left
 		textField.returnKeyType = .done
 		textField.adjustsFontSizeToFitWidth = true
 		textField.minimumFontSize = 12
@@ -75,9 +89,12 @@ internal final class TweakTableCell: UITableViewCell {
 		super.init(style: .value1, reuseIdentifier: reuseIdentifier)
 
 		[switchControl, stepperControl, colorChit, textField, disclosureArrow].forEach { accessory.addSubview($0) }
+		self.contentView.addSubview(sliderControl)
+		self.contentView.addSubview(tweakNameLabel)
 
 		switchControl.addTarget(self, action: #selector(self.switchChanged(_:)), for: .valueChanged)
 		stepperControl.addTarget(self, action: #selector(self.stepperChanged(_:)), for: .valueChanged)
+		sliderControl.addTarget(self, action: #selector(self.sliderChanged(_:)), for: .valueChanged)
 		textField.delegate = self
 
 		detailTextLabel!.textColor = AppTheme.Colors.textPrimary
@@ -108,32 +125,51 @@ internal final class TweakTableCell: UITableViewCell {
 		switch viewData {
 		case .boolean:
 			switchControl.sizeToFit()
+			switchControl.frame = CGRect(x: 0, y: 0, width: switchControl.bounds.size.width, height: bounds.size.height / 2)
 			accessory.bounds = switchControl.bounds
 
 		case .integer, .float, .doubleTweak:
 			stepperControl.sizeToFit()
+			sliderControl.sizeToFit()
 
 			let textFrame = CGRect(
-				origin: CGPoint.zero,
+				origin: CGPoint(
+					x: 100,
+					y: 0
+				),
 				size: CGSize(
 					width: bounds.width * TweakTableCell.numberTextWidthFraction,
-					height: bounds.height
+					height: bounds.height / 2
 				)
 			)
 
 			let stepperControlFrame = CGRect(
 				origin: CGPoint(
-					x: textFrame.width + TweakTableCell.horizontalPadding,
-					y: (textFrame.height - stepperControl.bounds.height) / 2
+					x: 100,
+					y: bounds.size.height / 2
 				),
 				size: stepperControl.bounds.size
 			)
 
 			textField.frame = textFrame
 			stepperControl.frame = stepperControlFrame
+			tweakNameLabel.frame = CGRect(x: TweakTableCell.horizontalPadding, y: 0, width: bounds.size.width - 2.0 * TweakTableCell.horizontalPadding, height: bounds.size.height/2)
 
-			let accessoryFrame = textFrame.union(stepperControlFrame)
+			var accessoryFrame = textFrame.union(stepperControlFrame)
+			accessoryFrame.origin.x -= 24.0
 			accessory.bounds = accessoryFrame.integral
+
+			let sliderControlFrame = CGRect(
+				origin: CGPoint(
+					x: TweakTableCell.horizontalPadding,
+					y: bounds.size.height / 2//(textFrame.height - sliderControl.bounds.height) / 2
+				),
+				size: CGSize(
+					width: bounds.size.width - stepperControlFrame.width - TweakTableCell.horizontalPadding - 14,
+					height: sliderControl.bounds.size.height
+				)
+			)
+			sliderControl.frame = sliderControlFrame
 
 		case .color:
 			let textFrame = CGRect(
@@ -203,6 +239,7 @@ internal final class TweakTableCell: UITableViewCell {
 			switchControl.isHidden = true
 			textField.isHidden = true
 			stepperControl.isHidden = true
+			sliderControl.isHidden = true
 			colorChit.isHidden = true
 			disclosureArrow.isHidden = true
 			return
@@ -214,32 +251,42 @@ internal final class TweakTableCell: UITableViewCell {
 			switchControl.isHidden = false
 			textField.isHidden = true
 			stepperControl.isHidden = true
+			sliderControl.isHidden = true
 			colorChit.isHidden = true
 			disclosureArrow.isHidden = true
+			tweakNameLabel.isHidden = true
 		case .integer, .float, .doubleTweak:
 			switchControl.isHidden = true
 			textField.isHidden = false
 			stepperControl.isHidden = false
+			sliderControl.isHidden = false
 			colorChit.isHidden = true
 			disclosureArrow.isHidden = true
+			tweakNameLabel.isHidden = false
 		case .color:
 			switchControl.isHidden = true
 			textField.isHidden = false
 			stepperControl.isHidden = true
+			sliderControl.isHidden = true
 			colorChit.isHidden = false
 			disclosureArrow.isHidden = false
+			tweakNameLabel.isHidden = true
 		case .string:
 			switchControl.isHidden = true
 			textField.isHidden = false
 			stepperControl.isHidden = true
+			sliderControl.isHidden = true
 			colorChit.isHidden = true
 			disclosureArrow.isHidden = true
+			tweakNameLabel.isHidden = true
 		case .stringList:
 			switchControl.isHidden = true
 			textField.isHidden = false
 			stepperControl.isHidden = true
+			sliderControl.isHidden = true
 			colorChit.isHidden = true
 			disclosureArrow.isHidden = false
+			tweakNameLabel.isHidden = true
 		}
 
 		// Update accessory internals based on viewData
@@ -252,6 +299,7 @@ internal final class TweakTableCell: UITableViewCell {
 		case .integer:
 			let doubleValue = viewData.doubleValue!
 			self.updateStepper(value: doubleValue, stepperValues: viewData.stepperValues!)
+			self.updateSlider(value: doubleValue, sliderValues: viewData.sliderValues!)
 
 			textField.text = String(describing: viewData.value)
 			textField.keyboardType = .numberPad
@@ -260,6 +308,7 @@ internal final class TweakTableCell: UITableViewCell {
 		case .float, .doubleTweak:
 			let doubleValue = viewData.doubleValue!
 			self.updateStepper(value: doubleValue, stepperValues: viewData.stepperValues!)
+			self.updateSlider(value: doubleValue, sliderValues: viewData.sliderValues!)
 
 			textField.text = doubleValue.stringValueRoundedToNearest(.thousandth)
 			textField.keyboardType = .decimalPad
@@ -295,6 +344,12 @@ internal final class TweakTableCell: UITableViewCell {
 		stepperControl.value = value // need to set this *after* the min/max have been set, else UIKit clips it.
 	}
 
+	private func updateSlider(value: Double, sliderValues: TweakViewData.SliderValues) {
+		sliderControl.minimumValue = Float(sliderValues.sliderMin)
+		sliderControl.maximumValue = Float(sliderValues.sliderMax)
+		sliderControl.value = Float(value)
+	}
+
 
 	// MARK: Events
 	@objc private func switchChanged(_ sender: UISwitch) {
@@ -317,6 +372,22 @@ internal final class TweakTableCell: UITableViewCell {
 			delegate?.tweakCellDidChangeCurrentValue(self)
 		case let .doubleTweak(_, defaultValue: defaultValue, min: min, max: max, stepSize: step):
 			viewData = TweakViewData(type: .double, value: stepperControl.value, defaultValue: defaultValue, minimum: min, maximum: max, stepSize: step, options: nil)
+			delegate?.tweakCellDidChangeCurrentValue(self)
+		case .color, .boolean, .string, .stringList:
+			assertionFailure("Shouldn't be able to update text field with a Color or Boolean or String or StringList tweak.")
+		}
+	}
+
+	@objc private func sliderChanged(_ sender: UISlider) {
+		switch viewData! {
+		case let .integer(_, defaultValue: defaultValue, min: min, max: max, stepSize: step):
+			viewData = TweakViewData(type: .integer, value: Int(sliderControl.value), defaultValue: defaultValue, minimum: min, maximum: max, stepSize: step, options: nil)
+			delegate?.tweakCellDidChangeCurrentValue(self)
+		case let .float(_, defaultValue: defaultValue, min: min, max: max, stepSize: step):
+			viewData = TweakViewData(type: .cgFloat, value: CGFloat(sliderControl.value), defaultValue: defaultValue, minimum: min, maximum: max, stepSize: step, options: nil)
+			delegate?.tweakCellDidChangeCurrentValue(self)
+		case let .doubleTweak(_, defaultValue: defaultValue, min: min, max: max, stepSize: step):
+			viewData = TweakViewData(type: .double, value: Double(sliderControl.value), defaultValue: defaultValue, minimum: min, maximum: max, stepSize: step, options: nil)
 			delegate?.tweakCellDidChangeCurrentValue(self)
 		case .color, .boolean, .string, .stringList:
 			assertionFailure("Shouldn't be able to update text field with a Color or Boolean or String or StringList tweak.")

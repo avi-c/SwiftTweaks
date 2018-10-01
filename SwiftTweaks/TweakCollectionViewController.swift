@@ -131,9 +131,12 @@ extension TweakCollectionViewController: UITableViewDelegate {
 	}
     
     private static let sectionFooterHeight: CGFloat = 27
-    
-    internal func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return TweakCollectionViewController.sectionFooterHeight
+	private static let tableCellHeight: CGFloat = 48
+
+	internal func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+		let tweak = tweakAtIndexPath(indexPath)
+		let tweakIsNumeric = (tweak.tweakViewDataType == .cgFloat || tweak.tweakViewDataType == .double || tweak.tweakViewDataType == .integer)
+		return tweakIsNumeric ? 80 : TweakCollectionViewController.tableCellHeight
     }
     
     internal func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -161,7 +164,9 @@ extension TweakCollectionViewController: UITableViewDataSource {
 		let tweak = tweakAtIndexPath(indexPath)
 
 		let cell = tableView.dequeueReusableCell(withIdentifier: TweakCollectionViewController.TweakTableViewCellIdentifer, for: indexPath) as! TweakTableCell
-		cell.textLabel?.text = tweak.tweakName
+		let tweakIsNumeric = (tweak.tweakViewDataType == .cgFloat || tweak.tweakViewDataType == .double || tweak.tweakViewDataType == .integer)
+		cell.textLabel?.text = tweakIsNumeric ? nil : tweak.tweakName
+		cell.tweakNameLabel.text = tweak.tweakName
 		cell.viewData = tweakStore.currentViewDataForTweak(tweak)
 		cell.delegate = self
 		return cell

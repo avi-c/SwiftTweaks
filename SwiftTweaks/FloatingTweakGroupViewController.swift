@@ -101,7 +101,7 @@ internal final class FloatingTweakGroupViewController: UIViewController {
 
 	private let titleLabel: UILabel = {
 		let label = UILabel()
-		label.textColor = AppTheme.Colors.sectionHeaderTitleColor
+		label.textColor = UIColor.blue//AppTheme.Colors.sectionHeaderTitleColor
 		label.font = AppTheme.Fonts.sectionHeaderTitleFont
 		return label
 	}()
