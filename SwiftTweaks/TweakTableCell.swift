@@ -19,7 +19,6 @@ internal final class TweakTableCell: UITableViewCell {
 
 	internal var viewData: TweakViewData? {
 		didSet {
-			accessoryView = accessory
 			accessoryType = .none
 			detailTextLabel?.text = nil
 			selectionStyle = .none
@@ -35,7 +34,10 @@ internal final class TweakTableCell: UITableViewCell {
 
 	internal var isInFloatingTweakGroupWindow = false
 
-	private var accessory = UIView()
+	private var accessory: UIView = {
+		let accessory = UIView()
+		return accessory
+	}()
 
 	private let switchControl: UISwitch = {
 		let switchControl = UISwitch()
@@ -88,9 +90,8 @@ internal final class TweakTableCell: UITableViewCell {
 	override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
 		super.init(style: .value1, reuseIdentifier: reuseIdentifier)
 
-		[switchControl, stepperControl, colorChit, textField, disclosureArrow].forEach { accessory.addSubview($0) }
-		self.contentView.addSubview(sliderControl)
-		self.contentView.addSubview(tweakNameLabel)
+		self.contentView.addSubview(accessory)
+		[sliderControl, tweakNameLabel, switchControl, stepperControl, colorChit, textField, disclosureArrow].forEach { accessory.addSubview($0) }
 
 		switchControl.addTarget(self, action: #selector(self.switchChanged(_:)), for: .valueChanged)
 		stepperControl.addTarget(self, action: #selector(self.stepperChanged(_:)), for: .valueChanged)
@@ -122,42 +123,44 @@ internal final class TweakTableCell: UITableViewCell {
 			return
 		}
 
+		var accessoryFrame = CGRect(x: TweakTableCell.horizontalPadding, y: 0.0, width: bounds.width - 2.0 * TweakTableCell.horizontalPadding, height: bounds.height)
+
+		if #available(iOS 11.0, *) {
+			accessoryFrame.size.width -=  self.safeAreaInsets.right
+		}
+		accessory.frame = accessoryFrame.integral
+
 		switch viewData {
 		case .boolean:
 			switchControl.sizeToFit()
-			switchControl.frame = CGRect(x: 0, y: 0, width: switchControl.bounds.size.width, height: bounds.size.height / 2)
-			accessory.bounds = switchControl.bounds
+			switchControl.frame = CGRect(x: accessoryFrame.size.width - switchControl.bounds.size.width - TweakTableCell.horizontalPadding, y: 0, width: switchControl.bounds.size.width, height: accessoryFrame.size.height)
 
 		case .integer, .float, .doubleTweak:
 			stepperControl.sizeToFit()
 			sliderControl.sizeToFit()
 
-			let textFrame = CGRect(
-				origin: CGPoint(
-					x: 100,
-					y: 0
-				),
-				size: CGSize(
-					width: bounds.width * TweakTableCell.numberTextWidthFraction,
-					height: bounds.height / 2
-				)
-			)
-
 			let stepperControlFrame = CGRect(
 				origin: CGPoint(
-					x: 100,
+					x: accessoryFrame.size.width - stepperControl.bounds.size.width,
 					y: bounds.size.height / 2
 				),
 				size: stepperControl.bounds.size
 			)
 
+			let textFrame = CGRect(
+				origin: CGPoint(
+					x: stepperControlFrame.origin.x,
+					y: 0
+				),
+				size: CGSize(
+					width: accessoryFrame.size.width * TweakTableCell.numberTextWidthFraction,
+					height: bounds.height / 2
+				)
+			)
+
 			textField.frame = textFrame
 			stepperControl.frame = stepperControlFrame
-			tweakNameLabel.frame = CGRect(x: TweakTableCell.horizontalPadding, y: 0, width: bounds.size.width - 2.0 * TweakTableCell.horizontalPadding, height: bounds.size.height/2)
-
-			var accessoryFrame = textFrame.union(stepperControlFrame)
-			accessoryFrame.origin.x -= 24.0
-			accessory.bounds = accessoryFrame.integral
+			tweakNameLabel.frame = CGRect(x: TweakTableCell.horizontalPadding, y: 0, width: accessoryFrame.size.width, height: bounds.size.height/2)
 
 			let sliderControlFrame = CGRect(
 				origin: CGPoint(
@@ -165,7 +168,7 @@ internal final class TweakTableCell: UITableViewCell {
 					y: bounds.size.height / 2//(textFrame.height - sliderControl.bounds.height) / 2
 				),
 				size: CGSize(
-					width: bounds.size.width - stepperControlFrame.width - TweakTableCell.horizontalPadding - 14,
+					width: accessoryFrame.size.width - stepperControlFrame.width - 2.0 * TweakTableCell.horizontalPadding,
 					height: sliderControl.bounds.size.height
 				)
 			)
@@ -173,7 +176,7 @@ internal final class TweakTableCell: UITableViewCell {
 
 		case .color:
 			let textFrame = CGRect(
-				origin: CGPoint.zero,
+				origin: CGPoint(x: bounds.width / 2, y: 0),
 				size: CGSize(
 					width: bounds.width * TweakTableCell.colorTextWidthFraction,
 					height: bounds.height
@@ -182,7 +185,7 @@ internal final class TweakTableCell: UITableViewCell {
 
 			let colorControlFrame = CGRect(
 				origin: CGPoint(
-					x: textFrame.width + TweakTableCell.horizontalPadding,
+					x: accessoryFrame.size.width - TweakTableCell.colorChitSize.width - disclosureArrow.bounds.width - 2.0 * TweakTableCell.horizontalPadding,
 					y: (textFrame.height - stepperControl.bounds.height) / 2
 				),
 				size: TweakTableCell.colorChitSize
@@ -190,7 +193,7 @@ internal final class TweakTableCell: UITableViewCell {
 
 			let disclosureArrowFrame = CGRect(
 				origin: CGPoint(
-					x: textFrame.width + colorControlFrame.width + 2 * TweakTableCell.horizontalPadding,
+					x: accessoryFrame.size.width - disclosureArrow.bounds.width - TweakTableCell.horizontalPadding,
 					y: 0),
 				size: CGSize(
 					width: disclosureArrow.bounds.width,
@@ -201,9 +204,6 @@ internal final class TweakTableCell: UITableViewCell {
 			textField.frame = textFrame
 			colorChit.frame = colorControlFrame
 			disclosureArrow.frame = disclosureArrowFrame
-
-			let accessoryFrame = colorControlFrame.union(textFrame).union(disclosureArrowFrame)
-			accessory.bounds = accessoryFrame.integral
 
 		case .string:
 			let textFrame = CGRect(
