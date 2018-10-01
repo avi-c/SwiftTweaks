@@ -116,12 +116,21 @@ class ViewController: UIViewController {
             if tweak.tweakViewDataType == .cgFloat {
                 let tweakInstance = tweak.tweak as! Tweak<CGFloat>
                 codedTweak.cgFloatValue = ExampleTweaks.defaultStore.assign(tweakInstance)
+                codedTweak.cgFloatMinValue = tweakInstance.defaultValue
+                codedTweak.cgFloatMaxValue = tweakInstance.maximumValue ?? 1.0
+                codedTweak.cgFloatStepValue = tweakInstance.stepSize ?? 0.05
             } else if tweak.tweakViewDataType == .double {
                 let tweakInstance = tweak.tweak as! Tweak<Double>
                 codedTweak.doubleValue = ExampleTweaks.defaultStore.assign(tweakInstance)
+                codedTweak.doubleMinValue = tweakInstance.defaultValue
+                codedTweak.doubleMaxValue = tweakInstance.maximumValue ?? 1.0
+                codedTweak.doubleStepValue = tweakInstance.stepSize ?? 0.05
             } else if tweak.tweakViewDataType == .integer {
                 let tweakInstance = tweak.tweak as! Tweak<Int>
                 codedTweak.intValue = ExampleTweaks.defaultStore.assign(tweakInstance)
+                codedTweak.intMinValue = tweakInstance.defaultValue
+                codedTweak.intMaxValue = tweakInstance.maximumValue ?? 10
+                codedTweak.intStepValue = tweakInstance.stepSize ?? 1
             } else if tweak.tweakViewDataType == .boolean {
                 let tweakInstance = tweak.tweak as! Tweak<Bool>
                 codedTweak.boolValue = ExampleTweaks.defaultStore.assign(tweakInstance)

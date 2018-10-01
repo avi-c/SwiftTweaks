@@ -16,13 +16,13 @@ public struct ExampleTweaks: TweakLibraryType {
 
 	// Tweaks work *great* with numbers, you just need to tell the compiler
 	// what kind of number you're using (Int, CGFloat, or Double)
-	public static let fontSizeText1 = Tweak<CGFloat>("Text", "Font Sizes", "title", 32)
-	public static let fontSizeText2 = Tweak<CGFloat>("Text", "Font Sizes", "body", 18)
+    public static let fontSizeText1 = Tweak<CGFloat>("Text", "Font Sizes", "title", defaultValue: 32, min: 1, max: 40, stepSize: 1)
+	public static let fontSizeText2 = Tweak<CGFloat>("Text", "Font Sizes", "body", defaultValue: 18, min: 1, max: 40, stepSize: 1)
 
 	// If the tweak is for a number, you can optionally add default / min / max / stepSize options to restrict the values.
 	// Maybe you've got a number that must be non-negative, for example:
-	public static let horizontalMargins = Tweak<CGFloat>("General", "Layout", "H. Margins", defaultValue: 16, min: 0)
-	public static let verticalMargins = Tweak<CGFloat>("General", "Layout", "V. Margins", defaultValue: 16, min: 0)
+    public static let horizontalMargins = Tweak<CGFloat>("General", "Layout", "H. Margins", defaultValue: 16, min: 0, max:50, stepSize: 2)
+    public static let verticalMargins = Tweak<CGFloat>("General", "Layout", "V. Margins", defaultValue: 16, min: 0, max:50, stepSize: 1)
 
 	public static let colorText1 = Tweak("Text", "Color", "text-1", UIColor.black)
 	public static let colorText2 = Tweak("Text", "Color", "text-2", UIColor(hue: 213/255, saturation: 0.07, brightness: 0.58, alpha: 1))

@@ -17,10 +17,10 @@ public struct Tweak<T: TweakableType> {
 	public let collectionName: String
 	public let groupName: String
 	public let tweakName: String
-	internal let defaultValue: T
-	internal let minimumValue: T?	// Only supported for T: Comparable
-	internal let maximumValue: T?	// Only supported for T: Comparable
-	internal let stepSize: T?		// Only supported for T: Comparable
+	public let defaultValue: T
+	public let minimumValue: T?	// Only supported for T: Comparable
+	public let maximumValue: T?	// Only supported for T: Comparable
+	public let stepSize: T?		// Only supported for T: Comparable
 	internal let options: [T]?		// Only supported for T: StringOption
 
 	internal init(collectionName: String, groupName: String, tweakName: String, defaultValue: T, minimumValue: T? = nil, maximumValue: T? = nil, stepSize: T? = nil, options: [T]? = nil) {
