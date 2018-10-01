@@ -133,7 +133,7 @@ internal final class TweakTableCell: UITableViewCell {
 		switch viewData {
 		case .boolean:
 			switchControl.sizeToFit()
-			switchControl.frame = CGRect(x: accessoryFrame.size.width - switchControl.bounds.size.width - TweakTableCell.horizontalPadding, y: 0, width: switchControl.bounds.size.width, height: accessoryFrame.size.height)
+			switchControl.frame = CGRect(x: accessoryFrame.size.width - switchControl.bounds.size.width - TweakTableCell.horizontalPadding, y: (accessoryFrame.size.height - switchControl.bounds.size.height) / 2.0, width: switchControl.bounds.size.width, height: accessoryFrame.size.height)
 
 		case .integer, .float, .doubleTweak:
 			stepperControl.sizeToFit()
@@ -206,31 +206,41 @@ internal final class TweakTableCell: UITableViewCell {
 			disclosureArrow.frame = disclosureArrowFrame
 
 		case .string:
-			let textFrame = CGRect(
-				origin: .zero,
+			var textFrame = CGRect(
+				origin: CGPoint(
+					x: TweakTableCell.horizontalPadding,
+					y: 0),
 				size: CGSize(
-					width: bounds.width * TweakTableCell.stringTextWidthFraction,
+					width: accessoryFrame.size.width * TweakTableCell.stringTextWidthFraction,
 					height: bounds.height
 				)
 			).integral
+			textFrame.origin.x = (accessoryFrame.size.width - textFrame.size.width) / 2.0
 			textField.frame = textFrame
-			accessory.bounds = textField.bounds
-
+//			accessory.bounds = textField.bounds
 		case .stringList:
-			let textFieldFrame = CGRect(
-				origin: .zero,
+			let disclosureArrowFrame = CGRect(
+				origin: CGPoint(
+					x: contentView.bounds.size.width - disclosureArrow.bounds.width - 2.0 * TweakTableCell.horizontalPadding,
+					y: 0),
 				size: CGSize(
-					width: bounds.width * TweakTableCell.stringTextWidthFraction,
+					width: disclosureArrow.bounds.width,
 					height: bounds.height
 				)
-			).integral
-			textField.frame = textFieldFrame
-			let disclosureArrowFrame = CGRect(
-				origin: CGPoint(x: textFieldFrame.width + TweakTableCell.horizontalPadding, y: 0),
-				size: CGSize(width: disclosureArrow.bounds.width, height: bounds.height)
 			)
 			disclosureArrow.frame = disclosureArrowFrame
-			accessory.bounds = textFieldFrame.union(disclosureArrowFrame).integral
+
+			var textFieldFrame = CGRect(
+				origin: .zero,
+				size: CGSize(
+					width: bounds.width * TweakTableCell.stringTextWidthFraction,
+					height: bounds.height
+				)
+			).integral
+			textFieldFrame.origin.x = disclosureArrowFrame.origin.x - textFieldFrame.size.width - TweakTableCell.horizontalPadding
+			textField.frame = textFieldFrame
+
+//			accessory.bounds = textFieldFrame.union(disclosureArrowFrame).integral
 		}
 	}
 
