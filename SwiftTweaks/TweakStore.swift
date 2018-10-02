@@ -198,3 +198,47 @@ extension TweakStore {
 			.map { return $0.1 }
 	}
 }
+
+extension TweakStore {
+	public func serializeTweaks() -> Data? {
+		let tweaks = self.allTweaks
+		var tweakInfo = [CodeableTweak]()
+
+		for tweak in tweaks {
+			var codedTweak = CodeableTweak(tweak: tweak)
+			if tweak.tweakViewDataType == .cgFloat {
+				let tweakInstance = tweak.tweak as! Tweak<CGFloat>
+				codedTweak.cgFloatValue = self.assign(tweakInstance)
+				codedTweak.cgFloatDefaultValue = tweakInstance.defaultValue
+				codedTweak.cgFloatMinValue = tweakInstance.minimumValue ?? 0.0
+				codedTweak.cgFloatMaxValue = tweakInstance.maximumValue ?? 1.0
+				codedTweak.cgFloatStepValue = tweakInstance.stepSize ?? 0.05
+			} else if tweak.tweakViewDataType == .double {
+				let tweakInstance = tweak.tweak as! Tweak<Double>
+				codedTweak.doubleValue = self.assign(tweakInstance)
+				codedTweak.doubleDefaultValue = tweakInstance.defaultValue
+				codedTweak.doubleMinValue = tweakInstance.minimumValue ?? 0.0
+				codedTweak.doubleMaxValue = tweakInstance.maximumValue ?? 1.0
+				codedTweak.doubleStepValue = tweakInstance.stepSize ?? 0.05
+			} else if tweak.tweakViewDataType == .integer {
+				let tweakInstance = tweak.tweak as! Tweak<Int>
+				codedTweak.intValue = self.assign(tweakInstance)
+				codedTweak.intDefaultValue = tweakInstance.defaultValue
+				codedTweak.intMinValue = tweakInstance.minimumValue ?? 0
+				codedTweak.intMaxValue = tweakInstance.maximumValue ?? 10
+				codedTweak.intStepValue = tweakInstance.stepSize ?? 1
+			} else if tweak.tweakViewDataType == .boolean {
+				let tweakInstance = tweak.tweak as! Tweak<Bool>
+				codedTweak.boolValue = self.assign(tweakInstance)
+			} else if tweak.tweakViewDataType == .string {
+				let tweakInstance = tweak.tweak as! Tweak<String>
+				codedTweak.stringValue = self.assign(tweakInstance)
+			}
+			tweakInfo.append(codedTweak)
+		}
+
+		let encodedData = try? JSONEncoder().encode(tweakInfo)
+
+		return encodedData
+	}
+}

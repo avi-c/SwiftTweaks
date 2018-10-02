@@ -96,54 +96,14 @@ class ViewController: UIViewController {
 			self.layoutContentsOfView()
 		}
 		multiTweakBindings.insert(multipleBinding)
-
 //        debugStuff()
 	}
 
     func debugStuff() -> Void {
-        let array = Array(ExampleTweaks.defaultStore.allTweaks)
-        if let data = serializeTweaks(tweaks: array) {
+        if let data = ExampleTweaks.defaultStore.serializeTweaks() {
             print("\(data.count)")
             // transmit data
         }
-    }
-
-    func serializeTweaks(tweaks: [AnyTweak]) -> Data? {
-        var tweakInfo = [CodeableTweak]()
-
-        for tweak in tweaks {
-            var codedTweak = CodeableTweak(tweak: tweak)
-            if tweak.tweakViewDataType == .cgFloat {
-                let tweakInstance = tweak.tweak as! Tweak<CGFloat>
-                codedTweak.cgFloatValue = ExampleTweaks.defaultStore.assign(tweakInstance)
-                codedTweak.cgFloatMinValue = tweakInstance.defaultValue
-                codedTweak.cgFloatMaxValue = tweakInstance.maximumValue ?? 1.0
-                codedTweak.cgFloatStepValue = tweakInstance.stepSize ?? 0.05
-            } else if tweak.tweakViewDataType == .double {
-                let tweakInstance = tweak.tweak as! Tweak<Double>
-                codedTweak.doubleValue = ExampleTweaks.defaultStore.assign(tweakInstance)
-                codedTweak.doubleMinValue = tweakInstance.defaultValue
-                codedTweak.doubleMaxValue = tweakInstance.maximumValue ?? 1.0
-                codedTweak.doubleStepValue = tweakInstance.stepSize ?? 0.05
-            } else if tweak.tweakViewDataType == .integer {
-                let tweakInstance = tweak.tweak as! Tweak<Int>
-                codedTweak.intValue = ExampleTweaks.defaultStore.assign(tweakInstance)
-                codedTweak.intMinValue = tweakInstance.defaultValue
-                codedTweak.intMaxValue = tweakInstance.maximumValue ?? 10
-                codedTweak.intStepValue = tweakInstance.stepSize ?? 1
-            } else if tweak.tweakViewDataType == .boolean {
-                let tweakInstance = tweak.tweak as! Tweak<Bool>
-                codedTweak.boolValue = ExampleTweaks.defaultStore.assign(tweakInstance)
-            } else if tweak.tweakViewDataType == .string {
-                let tweakInstance = tweak.tweak as! Tweak<String>
-                codedTweak.stringValue = ExampleTweaks.defaultStore.assign(tweakInstance)
-            }
-            tweakInfo.append(codedTweak)
-        }
-
-        let encodedData = try? JSONEncoder().encode(tweakInfo)
-
-        return encodedData
     }
 
 	override func viewWillAppear(_ animated: Bool) {
