@@ -174,6 +174,11 @@ internal enum TweakViewData {
 			isInteger = false
 		}
 
+		var resultMin: Double = 0.0
+		var resultMax: Double = 1.0
+		var resultStep: Double = 1.0
+
+		#if false
 		// UIStepper defaults to (min = 0, max = 100, step = 1), so we'll use those as a fallback.
 		var resultMin: Double = TweakViewData.stepperDefaultMinimum
 		var resultMax: Double = TweakViewData.stepperDefaultMaximumLarge
@@ -214,6 +219,8 @@ internal enum TweakViewData {
 			resultMax = resultMax.roundToNearest(.integer)
 			resultStep = resultStep.roundToNearest(.integer)
 		}
+
+		#endif
 
 		// Lastly, to override any above work: if an explicit min/max/step were given, use those.
 		resultMin = minimum ?? resultMin
@@ -269,6 +276,9 @@ internal enum TweakViewData {
 			isInteger = false
 		}
 
+		var resultMin: Double = 0.0
+		var resultMax: Double = 1.0
+		#if false
 		// UISlider defaults to (min = 0, max = 1), so we'll use those as a fallback.
 		var resultMin: Double = TweakViewData.sliderDefaultMinimum
 		var resultMax: Double = TweakViewData.sliderDefaultMaximumLarge
@@ -306,9 +316,11 @@ internal enum TweakViewData {
 			resultMax = resultMax.roundToNearest(.integer)
 		}
 
+		#endif
+
 		// Lastly, to override any above work: if an explicit min/max were given, use those.
-		resultMin = minimum ?? resultMin
-		resultMax = maximum ?? resultMax
+		resultMin = minimum ?? 0.0
+		resultMax = maximum ?? 1.0
 
 		return (resultMin, resultMax)
 	}

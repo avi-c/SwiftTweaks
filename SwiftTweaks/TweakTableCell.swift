@@ -164,11 +164,11 @@ internal final class TweakTableCell: UITableViewCell {
 
 			let sliderControlFrame = CGRect(
 				origin: CGPoint(
-					x: TweakTableCell.horizontalPadding,
+					x: 2.0 * TweakTableCell.horizontalPadding,
 					y: bounds.size.height / 2//(textFrame.height - sliderControl.bounds.height) / 2
 				),
 				size: CGSize(
-					width: accessoryFrame.size.width - stepperControlFrame.width - 2.0 * TweakTableCell.horizontalPadding,
+					width: accessoryFrame.size.width - stepperControlFrame.width - 3.0 * TweakTableCell.horizontalPadding,
 					height: sliderControl.bounds.size.height
 				)
 			)
