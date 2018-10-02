@@ -97,6 +97,7 @@ internal final class TweakTableCell: UITableViewCell {
 		stepperControl.addTarget(self, action: #selector(self.stepperChanged(_:)), for: .valueChanged)
 		sliderControl.addTarget(self, action: #selector(self.sliderChanged(_:)), for: .valueChanged)
 		textField.delegate = self
+		addDoneButtonOnKeyboard()
 
 		detailTextLabel!.textColor = AppTheme.Colors.textPrimary
 	}
@@ -110,6 +111,29 @@ internal final class TweakTableCell: UITableViewCell {
 	private static let stringTextWidthFraction: CGFloat = 0.60
 	private static let horizontalPadding: CGFloat = 6 // Horiz. separation between stepper and text field
 	private static let colorChitSize = CGSize(width: 29, height: 29)
+
+	func addDoneButtonOnKeyboard()
+	{
+		let doneToolbar: UIToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height))
+		doneToolbar.barStyle = UIBarStyle.default
+
+		let flexSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
+		let done: UIBarButtonItem = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.done, target: self, action: #selector(self.doneButtonAction))
+
+		var items = [UIBarButtonItem]()
+		items.append(flexSpace)
+		items.append(done)
+
+		doneToolbar.items = items
+		doneToolbar.sizeToFit()
+
+		textField.inputAccessoryView = doneToolbar
+	}
+
+	@objc private func doneButtonAction()
+	{
+		textField.resignFirstResponder()
+	}
 
 	override func layoutSubviews() {
 
