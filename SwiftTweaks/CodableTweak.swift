@@ -17,6 +17,9 @@ public struct CodeableTweak : Codable {
 	public var doubleValue: Double
 	public var cgFloatValue: CGFloat
 	public var intValue: Int
+	public var doubleDefaultValue: Double
+	public var cgFloatDefaultValue: CGFloat
+	public var intDefaultValue: Int
 	public var boolValue: Bool
 	public var stringValue: String
 	public var doubleMinValue: Double
@@ -40,6 +43,9 @@ public struct CodeableTweak : Codable {
 		intValue = Int(-1)
 		boolValue = false
 		stringValue = ""
+		doubleDefaultValue = Double(-1.0)
+		cgFloatDefaultValue = CGFloat(-1.0)
+		intDefaultValue = Int(-1)
 		doubleMinValue = Double(-1.0)
 		cgFloatMinValue = CGFloat(-1.0)
 		intMinValue = Int(-1)
@@ -60,6 +66,9 @@ public struct CodeableTweak : Codable {
 		case doubleValue
 		case cgFloatValue
 		case intValue
+		case doubleDefaultValue
+		case cgFloatDefaultValue
+		case intDefaultValue
 		case doubleMinValue
 		case cgFloatMinValue
 		case intMinValue
@@ -87,6 +96,9 @@ public struct CodeableTweak : Codable {
 		intValue = -1
 		boolValue = false
 		stringValue = ""
+		cgFloatDefaultValue = -1.0
+		doubleDefaultValue = -1.0
+		intDefaultValue = -1
 		doubleMinValue = Double(-1.0)
 		cgFloatMinValue = CGFloat(-1.0)
 		intMinValue = Int(-1)
@@ -99,16 +111,19 @@ public struct CodeableTweak : Codable {
 
 		if tweakDataType == .cgFloat {
 			cgFloatValue = try values.decode(CGFloat.self, forKey: .cgFloatValue)
+			cgFloatDefaultValue = try values.decode(CGFloat.self, forKey: .cgFloatDefaultValue)
 			cgFloatMinValue = try values.decode(CGFloat.self, forKey: .cgFloatMinValue)
 			cgFloatMaxValue = try values.decode(CGFloat.self, forKey: .cgFloatMaxValue)
 			cgFloatStepValue = try values.decode(CGFloat.self, forKey: .cgFloatStepValue)
 		} else if tweakDataType == .double {
 			doubleValue = try values.decode(Double.self, forKey: .doubleValue)
+			doubleDefaultValue = try values.decode(Double.self, forKey: .doubleDefaultValue)
 			doubleMinValue = try values.decode(Double.self, forKey: .doubleMinValue)
 			doubleMaxValue = try values.decode(Double.self, forKey: .doubleMaxValue)
 			doubleStepValue = try values.decode(Double.self, forKey: .doubleStepValue)
 		} else if tweakDataType == .integer {
 			intValue = try values.decode(Int.self, forKey: .intValue)
+			intDefaultValue = try values.decode(Int.self, forKey: .intDefaultValue)
 			intMinValue = try values.decode(Int.self, forKey: .intMinValue)
 			intMaxValue = try values.decode(Int.self, forKey: .intMaxValue)
 			intStepValue = try values.decode(Int.self, forKey: .intStepValue)
@@ -127,14 +142,17 @@ public struct CodeableTweak : Codable {
 		try container.encode(tweakName, forKey: .tweakName)
 		try container.encode(tweakType, forKey: .tweakType)
 		try container.encode(doubleValue, forKey: .doubleValue)
+		try container.encode(doubleDefaultValue, forKey: .doubleDefaultValue)
 		try container.encode(doubleMinValue, forKey: .doubleMinValue)
 		try container.encode(doubleMaxValue, forKey: .doubleMaxValue)
 		try container.encode(doubleStepValue, forKey: .doubleStepValue)
 		try container.encode(cgFloatValue, forKey: .cgFloatValue)
+		try container.encode(cgFloatDefaultValue, forKey: .cgFloatDefaultValue)
 		try container.encode(cgFloatValue, forKey: .cgFloatMinValue)
 		try container.encode(cgFloatMaxValue, forKey: .cgFloatMaxValue)
 		try container.encode(cgFloatStepValue, forKey: .cgFloatStepValue)
 		try container.encode(intValue, forKey: .intValue)
+		try container.encode(intDefaultValue, forKey: .intDefaultValue)
 		try container.encode(intValue, forKey: .intMinValue)
 		try container.encode(intStepValue, forKey: .intStepValue)
 		try container.encode(boolValue, forKey: .boolValue)
